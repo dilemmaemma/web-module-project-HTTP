@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const Movie = (props) => {
   const { addToFavorites } = props;
+  const { deleteMovie } = props
 
   const [movie, setMovie] = useState('');
 
@@ -20,6 +21,27 @@ const Movie = (props) => {
         console.log(err.response);
       })
   }, [id]);
+
+  const handleDelete = () => {
+    axios.delete(`http://localhost:9000/api/movies/${id}`)
+      .then(() => {
+        deleteMovie(id)
+        navigate('/movies')
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
+  const handleFavorite = () => {
+    axios.get(`http://localhost:9000/api/movies/${id}`)
+      .then(res => {
+        addToFavorites(res.data)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
 
   return (<div className="modal-page col">
     <div className="modal-dialog">
@@ -50,9 +72,9 @@ const Movie = (props) => {
             </section>
 
             <section>
-              <span className="m-2 btn btn-dark">Favorite</span>
+              <span onClick={handleFavorite}className="m-2 btn btn-dark">Favorite</span>
               <Link to={`/movies/edit/${movie.id}`} className="m-2 btn btn-success">Edit</Link>
-              <span className="delete"><input type="button" className="m-2 btn btn-danger" value="Delete" /></span>
+              <span onClick={handleDelete} className="delete"><input type="button" className="m-2 btn btn-danger" value="Delete" /></span>
             </section>
           </div>
         </div>
